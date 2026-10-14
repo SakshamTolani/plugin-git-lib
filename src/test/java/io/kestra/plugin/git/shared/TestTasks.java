@@ -289,4 +289,33 @@ public final class TestTasks {
             }
         }
     }
+
+    /** A {@link TestSyncTask} overriding the {@code RunState}-aware hooks, recording the state each one receives. */
+    @SuperBuilder(toBuilder = true)
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
+    @Getter
+    @NoArgsConstructor
+    public static class TestStatefulSyncTask extends TestSyncTask {
+        @Builder.Default
+        private List<RunState> seenRunStates = new CopyOnWriteArrayList<>();
+
+        @Override
+        protected List<String> fetchResources(RunContext runContext, String renderedNamespace, RunState runState) {
+            seenRunStates.add(runState);
+            return super.fetchResources(runContext, renderedNamespace);
+        }
+
+        @Override
+        protected String simulateResourceWrite(RunContext runContext, String renderedNamespace, URI uri, InputStream inputStream, RunState runState) {
+            seenRunStates.add(runState);
+            return super.simulateResourceWrite(runContext, renderedNamespace, uri, inputStream);
+        }
+
+        @Override
+        protected String writeResource(RunContext runContext, String renderedNamespace, URI uri, InputStream inputStream, RunState runState) {
+            seenRunStates.add(runState);
+            return super.writeResource(runContext, renderedNamespace, uri, inputStream);
+        }
+    }
 }
