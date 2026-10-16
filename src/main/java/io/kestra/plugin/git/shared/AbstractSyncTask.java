@@ -368,7 +368,10 @@ public abstract class AbstractSyncTask<T, O extends AbstractSyncTask.Output> ext
         );
     }
 
-    /** State for a single run of the sync; see {@link #newRunState()}. */
+    /**
+     * State for a single run of the sync; see {@link #newRunState()}. Only used from the thread running the sync, so it is
+     * not thread-safe.
+     */
     public static class RunState {
     }
 
